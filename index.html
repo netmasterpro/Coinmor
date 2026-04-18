@@ -7,12 +7,16 @@
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="login">
-  <h2>Ingresar Usuario</h2>
-  <input id="username" placeholder="Christian / Nayeli / otro">
-  <button onclick="login()">Entrar</button>
+  <h2>Iniciar sesión</h2>
+  <input id="username" placeholder="Usuario">
+  <input id="password" type="password" placeholder="Clave">
+  <button id="loginBtn">Entrar</button>
+  <p id="error" style="color:red;"></p>
 </div>
 
+<!-- JUEGO -->
 <div id="game" style="display:none">
 
 <h1>🎰 CASINO DEL AMOR 🎰</h1>
@@ -35,6 +39,23 @@
 <p id="result"></p>
 
 <h3>Obtener monedas</h3>
+<button onclick="sendPhoto()">📸 Enviar foto (+500)</button>
+<button onclick="sendAudio()">🎤 Enviar audio (+200)</button>
+
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel" class="modal">
+  <div class="modal-content">
+    <input id="adminPass" placeholder="Clave admin">
+    <button onclick="checkAdmin()">Entrar</button>
+    <div id="adminContent"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html><h3>Obtener monedas</h3>
 <button onclick="uploadPhoto()">📸 +500</button>
 <button onclick="uploadAudio()">🎤 +100</button>
 
