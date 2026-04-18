@@ -3,15 +3,15 @@ let user = null;
 const USERS = {
   "Cristian": "94",
   "Nayeli": "94",
-  "Prueba": "94"
+  "Prueba": "12345"
 };
 
 function login(){
-  let u = username.value;
-  let p = password.value;
+  let u = document.getElementById("username").value.trim();
+  let p = document.getElementById("password").value.trim();
 
   if(!USERS[u] || USERS[u] !== p){
-    error.innerText = "Error";
+    document.getElementById("error").innerText = "Datos incorrectos";
     return;
   }
 
@@ -19,14 +19,14 @@ function login(){
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
-      coins: u === "Prueba" ? 1000000000000 : 1000,
+      coins: u === "Prueba" ? 10000000000000 : 1000,
       points:0,
       jackpot:false
     }));
   }
 
-  login.style.display="none";
-  game.style.display="block";
+  document.getElementById("login").style.display="none";
+  document.getElementById("game").style.display="block";
 
   load();
 }
@@ -34,9 +34,9 @@ function login(){
 function load(){
   let d = JSON.parse(localStorage.getItem(user));
 
-  coins.innerText = d.coins;
-  points.innerText = d.points;
-  quetzales.innerText = Math.floor(d.points/1000);
+  document.getElementById("coins").innerText = d.coins;
+  document.getElementById("points").innerText = d.points;
+  document.getElementById("quetzales").innerText = Math.floor(d.points/1000);
 }
 
 const symbols = ["N","A","Y","🍒","⭐"];
@@ -44,7 +44,10 @@ const symbols = ["N","A","Y","🍒","⭐"];
 function spin(){
   let d = JSON.parse(localStorage.getItem(user));
 
-  if(d.coins < 100) return alert("Sin monedas");
+  if(d.coins < 100){
+    alert("Sin monedas");
+    return;
+  }
 
   d.coins -= 100;
 
@@ -58,15 +61,18 @@ function spin(){
     let m2 = document.getElementById("c2r2").innerText;
     let m3 = document.getElementById("c3r2").innerText;
 
+    // 🎯 SOLO NAY da premio mayor
     if(m1=="N" && m2=="A" && m3=="Y" && !d.jackpot){
       d.jackpot = true;
       d.points += 2000;
-      alert("PREMIO MAYOR 💖");
+      alert("🎉 PREMIO MAYOR 💖");
     }
-    else if(m1===m2 && m2===m3){
+
+    // 🍒⭐ premios normales (SIN letras)
+    else if(m1===m2 && m2===m3 && !["N","A","Y"].includes(m1)){
       d.points += 500;
     }
-    else if(m1===m2 || m2===m3){
+    else if((m1===m2 || m2===m3) && !["N","A","Y"].includes(m2)){
       d.points += 200;
     }
 
@@ -108,11 +114,13 @@ function register(type,reward){
 
 /* ADMIN */
 function openAdmin(){
-  adminPanel.style.display="block";
+  document.getElementById("adminPanel").style.display="block";
 }
 
 function checkAdmin(){
-  if(adminPass.value === "cristiannayeli"){
+  let pass = document.getElementById("adminPass").value;
+
+  if(pass === "cristiannayeli"){
     showAdmin();
   }else{
     alert("Clave incorrecta");
@@ -120,14 +128,15 @@ function checkAdmin(){
 }
 
 function showAdmin(){
-  adminContent.innerHTML="";
+  let div = document.getElementById("adminContent");
+  div.innerHTML="";
 
   let list = JSON.parse(localStorage.getItem("pending")||"[]");
 
   list.forEach((item,i)=>{
-    let div = document.createElement("div");
+    let box = document.createElement("div");
 
-    div.innerHTML = `${item.user} - ${item.type}`;
+    box.innerHTML = `${item.user} - ${item.type}`;
 
     let ok = document.createElement("button");
     ok.innerText="✔";
@@ -152,9 +161,9 @@ function showAdmin(){
       showAdmin();
     };
 
-    div.appendChild(ok);
-    div.appendChild(no);
+    box.appendChild(ok);
+    box.appendChild(no);
 
-    adminContent.appendChild(div);
+    div.appendChild(box);
   });
 }
