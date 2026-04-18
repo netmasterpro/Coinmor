@@ -1,7 +1,23 @@
 let user = null;
 
+const USERS = {
+  "Cristian": "94",
+  "Nayeli": "94",
+  "Prueba": "94"
+};
+
+document.getElementById("loginBtn").addEventListener("click", login);
+
 function login(){
-  user = document.getElementById("username").value;
+  let u = document.getElementById("username").value;
+  let p = document.getElementById("password").value;
+
+  if(!USERS[u] || USERS[u] !== p){
+    document.getElementById("error").innerText = "Datos incorrectos";
+    return;
+  }
+
+  user = u;
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
@@ -23,11 +39,10 @@ function login(){
 function load(){
   let data = JSON.parse(localStorage.getItem(user));
 
-  // convertir puntos a quetzales
   data.quetzales = Math.floor(data.points / 1000);
 
-  // recompensa cada 30 min
   let now = Date.now();
+
   if(data.coins <= 0){
     if(now - data.lastReward > 1800000 && data.daily < 1000){
       data.coins += 100;
@@ -51,21 +66,19 @@ const symbols = ["N","A","Y","🍒","⭐"];
 function spin(){
   let data = JSON.parse(localStorage.getItem(user));
 
-  if(data.coins < 100) return alert("Sin monedas");
+  if(data.coins < 100){
+    alert("Sin monedas");
+    return;
+  }
 
   data.coins -= 100;
 
-  let r = [
-    random(),
-    random(),
-    random()
-  ];
+  let r = [random(), random(), random()];
 
   document.getElementById("r1").innerText = r[0];
   document.getElementById("r2").innerText = r[1];
   document.getElementById("r3").innerText = r[2];
 
-  // PREMIO MAYOR NAY
   if(r[0]=="N" && r[1]=="A" && r[2]=="Y" && !data.jackpot){
     data.jackpot = true;
     data.points += 1000;
@@ -83,28 +96,36 @@ function spin(){
 }
 
 function random(){
-  let prob = Math.random();
+  let p = Math.random();
 
-  if(prob < 0.05) return "N";
-  if(prob < 0.10) return "A";
-  if(prob < 0.15) return "Y";
+  if(p < 0.05) return "N";
+  if(p < 0.10) return "A";
+  if(p < 0.15) return "Y";
 
   return symbols[Math.floor(Math.random()*symbols.length)];
 }
 
-/* SUBIDAS */
-let pending = JSON.parse(localStorage.getItem("pending")||"[]");
+/* WHATSAPP */
+function sendPhoto(){
+  let msg = encodeURIComponent("Hola, soy " + user + " envío foto para +500 monedas 📸");
+  window.open("https://wa.me/573026782036?text=" + msg, "_blank");
 
-function uploadPhoto(){
-  pending.push({user,type:"foto",reward:500});
-  localStorage.setItem("pending", JSON.stringify(pending));
-  alert("Foto enviada para revisión");
+  registerPending("foto", 500);
 }
 
-function uploadAudio(){
-  pending.push({user,type:"audio",reward:100});
+function sendAudio(){
+  let msg = encodeURIComponent("Hola, soy " + user + " envío audio para +200 monedas 🎤");
+  window.open("https://wa.me/573026782036?text=" + msg, "_blank");
+
+  registerPending("audio", 200);
+}
+
+function registerPending(type, reward){
+  let pending = JSON.parse(localStorage.getItem("pending") || "[]");
+
+  pending.push({user, type, reward});
+
   localStorage.setItem("pending", JSON.stringify(pending));
-  alert("Audio enviado");
 }
 
 /* ADMIN */
@@ -129,11 +150,16 @@ function showAdmin(){
   let list = JSON.parse(localStorage.getItem("pending")||"[]");
 
   list.forEach((item,i)=>{
-    let btn = document.createElement("button");
-    btn.innerText = item.user + " - " + item.type;
+
+    let box = document.createElement("div");
+
+    box.innerHTML = `<p>${item.user} - ${item.type}</p>`;
 
     let approve = document.createElement("button");
-    approve.innerText = "Aprobar";
+    approve.innerText = "✅ Aprobar";
+
+    let reject = document.createElement("button");
+    reject.innerText = "❌ Rechazar";
 
     approve.onclick = ()=>{
       let data = JSON.parse(localStorage.getItem(item.user));
@@ -143,11 +169,19 @@ function showAdmin(){
 
       list.splice(i,1);
       localStorage.setItem("pending", JSON.stringify(list));
+
       showAdmin();
     };
 
-    div.appendChild(btn);
-    div.appendChild(approve);
-    div.appendChild(document.createElement("br"));
+    reject.onclick = ()=>{
+      list.splice(i,1);
+      localStorage.setItem("pending", JSON.stringify(list));
+      showAdmin();
+    };
+
+    box.appendChild(approve);
+    box.appendChild(reject);
+
+    div.appendChild(box);
   });
 }
