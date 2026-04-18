@@ -7,44 +7,62 @@
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="login">
   <h2>Iniciar sesión</h2>
-
   <input id="username" placeholder="Usuario">
   <input id="password" type="password" placeholder="Clave">
-
-  <!-- 🔥 SOLUCIÓN AQUÍ -->
   <button onclick="login()">Entrar</button>
-
   <p id="error" style="color:red;"></p>
 </div>
 
-<!-- JUEGO -->
 <div id="game" style="display:none">
 
 <h1>🎰 CASINO DEL AMOR 🎰</h1>
 
 <div class="top-bar">
-  💰 Monedas: <span id="coins"></span> |
-  ⭐ Puntos: <span id="points"></span> |
-  💵 Q: <span id="quetzales"></span>
+  💰 <span id="coins"></span> |
+  ⭐ <span id="points"></span> |
+  💵 <span id="quetzales"></span>
 </div>
 
 <button class="admin-btn" onclick="openAdmin()">👑</button>
 
 <div class="machine">
-  <div class="reel" id="r1"></div>
-  <div class="reel" id="r2"></div>
-  <div class="reel" id="r3"></div>
+
+  <!-- COLUMNA 1 -->
+  <div class="column">
+    <div class="cell" id="c1r1"></div>
+    <div class="cell middle" id="c1r2"></div>
+    <div class="cell" id="c1r3"></div>
+  </div>
+
+  <!-- COLUMNA 2 -->
+  <div class="column">
+    <div class="cell" id="c2r1"></div>
+    <div class="cell middle" id="c2r2"></div>
+    <div class="cell" id="c2r3"></div>
+  </div>
+
+  <!-- COLUMNA 3 -->
+  <div class="column">
+    <div class="cell" id="c3r1"></div>
+    <div class="cell middle" id="c3r2"></div>
+    <div class="cell" id="c3r3"></div>
+  </div>
+
 </div>
 
 <button onclick="spin()">GIRAR (100)</button>
-<p id="result"></p>
 
 <h3>Obtener monedas</h3>
-<button onclick="sendPhoto()">📸 Enviar foto (+500)</button>
-<button onclick="sendAudio()">🎤 Enviar audio (+200)</button>
+
+<button onclick="sendPhoto()">
+📸 Obtener 500 monedas - enviar selfie rostro
+</button>
+
+<button onclick="sendAudio()">
+🎤 Obtener 200 monedas - enviar audio beso
+</button>
 
 </div>
 
