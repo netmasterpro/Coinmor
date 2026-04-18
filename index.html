@@ -1,32 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>🎰 Casino del Amor</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>Casino del Amor PRO</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <div class="casino">
+<div id="login">
+  <h2>Ingresar Usuario</h2>
+  <input id="username" placeholder="Christian / Nayeli / otro">
+  <button onclick="login()">Entrar</button>
+</div>
 
-    <h1 class="title">🎰 CASINO DEL AMOR 🎰</h1>
+<div id="game" style="display:none">
 
-    <div class="saldo">
-      💰 Monedas: <span id="coins">1000</span>
-    </div>
+<h1>🎰 CASINO DEL AMOR 🎰</h1>
 
-    <div class="machine">
-      <div class="reel" id="r1"></div>
-      <div class="reel" id="r2"></div>
-      <div class="reel" id="r3"></div>
-    </div>
+<div class="top-bar">
+  💰 Monedas: <span id="coins"></span> |
+  ⭐ Puntos: <span id="points"></span> |
+  💵 Q: <span id="quetzales"></span>
+</div>
 
-    <button id="spinBtn" onclick="spin()">GIRAR (100)</button>
+<button class="admin-btn" onclick="openAdmin()">👑</button>
 
-    <p id="resultado"></p>
+<div class="machine">
+  <div class="reel" id="r1"></div>
+  <div class="reel" id="r2"></div>
+  <div class="reel" id="r3"></div>
+</div>
 
+<button onclick="spin()">GIRAR (100)</button>
+<p id="result"></p>
+
+<h3>Obtener monedas</h3>
+<button onclick="uploadPhoto()">📸 +500</button>
+<button onclick="uploadAudio()">🎤 +100</button>
+
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="adminPanel" class="modal">
+  <div class="modal-content">
+    <input id="adminPass" placeholder="Clave">
+    <button onclick="checkAdmin()">Entrar</button>
+    <div id="adminContent"></div>
   </div>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
