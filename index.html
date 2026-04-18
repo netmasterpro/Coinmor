@@ -12,68 +12,51 @@
   <input id="username" placeholder="Usuario">
   <input id="password" type="password" placeholder="Clave">
   <button onclick="login()">Entrar</button>
-  <p id="error" style="color:red;"></p>
+  <p id="error"></p>
 </div>
 
 <div id="game" style="display:none">
 
-<h1>🎰 CASINO DEL AMOR 🎰</h1>
+<h1>🎰 CASINO 🎰</h1>
 
-<div class="top-bar">
-  💰 <span id="coins"></span> |
-  ⭐ <span id="points"></span> |
-  💵 <span id="quetzales"></span>
+<div>
+💰 <span id="coins"></span> |
+⭐ <span id="points"></span> |
+💵 <span id="quetzales"></span>
 </div>
 
-<button class="admin-btn" onclick="openAdmin()">👑</button>
-
 <div class="machine">
-
   <div class="column">
     <div class="cell" id="c1r1"></div>
     <div class="cell middle" id="c1r2"></div>
     <div class="cell" id="c1r3"></div>
   </div>
-
   <div class="column">
     <div class="cell" id="c2r1"></div>
     <div class="cell middle" id="c2r2"></div>
     <div class="cell" id="c2r3"></div>
   </div>
-
   <div class="column">
     <div class="cell" id="c3r1"></div>
     <div class="cell middle" id="c3r2"></div>
     <div class="cell" id="c3r3"></div>
   </div>
-
 </div>
 
 <button onclick="spin()">GIRAR (100)</button>
 
-<button onclick="convertPoints()">
-💱 Canjear puntos a quetzales
-</button>
+<button onclick="convertPoints()">💱 Canjear puntos</button>
 
 <h3>Obtener monedas</h3>
 
-<button onclick="sendPhoto()">
-📸 Obtener 500 monedas - enviar selfie rostro
-</button>
+<button>📸 500 monedas - selfie</button>
+<input id="key500" placeholder="Clave 500">
+<button onclick="redeem500()">Canjear 500</button>
 
-<button onclick="sendAudio()">
-🎤 Obtener 200 monedas - enviar audio beso
-</button>
+<button>🎤 200 monedas - audio</button>
+<input id="key200" placeholder="Clave 200">
+<button onclick="redeem200()">Canjear 200</button>
 
-</div>
-
-<!-- ADMIN -->
-<div id="adminPanel" class="modal">
-  <div class="modal-content">
-    <input id="adminPass" placeholder="Clave admin">
-    <button onclick="checkAdmin()">Entrar</button>
-    <div id="adminContent"></div>
-  </div>
 </div>
 
 <script src="script.js"></script>
