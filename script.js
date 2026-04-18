@@ -1,104 +1,153 @@
-let coins = 1000;
+let user = null;
 
-const symbols = ["🍒", "🍋", "🍉", "⭐", "💎"];
+function login(){
+  user = document.getElementById("username").value;
 
-const r1 = document.getElementById("r1");
-const r2 = document.getElementById("r2");
-const r3 = document.getElementById("r3");
-
-const spinBtn = document.getElementById("spinBtn");
-
-function spin() {
-  if (coins < 100) {
-    alert("No tienes monedas 😢");
-    return;
+  if(!localStorage.getItem(user)){
+    localStorage.setItem(user, JSON.stringify({
+      coins:1000,
+      points:0,
+      quetzales:0,
+      jackpot:false,
+      lastReward:0,
+      daily:0
+    }));
   }
 
-  coins -= 100;
-  updateCoins();
+  document.getElementById("login").style.display="none";
+  document.getElementById("game").style.display="block";
 
-  spinBtn.disabled = true;
-
-  startAnimation();
-
-  setTimeout(() => {
-    let result = generateResult();
-
-    r1.textContent = result[0];
-    r2.textContent = result[1];
-    r3.textContent = result[2];
-
-    stopAnimation();
-
-    checkWin(result);
-
-    spinBtn.disabled = false;
-
-  }, 1500);
+  load();
 }
 
-function startAnimation() {
-  r1.classList.add("spinning");
-  r2.classList.add("spinning");
-  r3.classList.add("spinning");
+function load(){
+  let data = JSON.parse(localStorage.getItem(user));
 
-  let interval = setInterval(() => {
-    r1.textContent = randomSymbol();
-    r2.textContent = randomSymbol();
-    r3.textContent = randomSymbol();
-  }, 100);
+  // convertir puntos a quetzales
+  data.quetzales = Math.floor(data.points / 1000);
 
-  window.spinInterval = interval;
+  // recompensa cada 30 min
+  let now = Date.now();
+  if(data.coins <= 0){
+    if(now - data.lastReward > 1800000 && data.daily < 1000){
+      data.coins += 100;
+      data.daily += 100;
+      data.lastReward = now;
+    }
+  }
+
+  localStorage.setItem(user, JSON.stringify(data));
+  updateUI(data);
 }
 
-function stopAnimation() {
-  clearInterval(window.spinInterval);
-
-  r1.classList.remove("spinning");
-  r2.classList.remove("spinning");
-  r3.classList.remove("spinning");
+function updateUI(d){
+  document.getElementById("coins").innerText = d.coins;
+  document.getElementById("points").innerText = d.points;
+  document.getElementById("quetzales").innerText = d.quetzales;
 }
 
-function generateResult() {
-  let rand = Math.random();
+const symbols = ["N","A","Y","🍒","⭐"];
 
-  if (rand < 0.05) {
-    let sym = randomSymbol();
-    return [sym, sym, sym];
-  } else if (rand < 0.20) {
-    let sym = randomSymbol();
-    let other = randomSymbol();
-    return [sym, sym, other];
-  } else {
-    return [
-      randomSymbol(),
-      randomSymbol(),
-      randomSymbol()
-    ];
+function spin(){
+  let data = JSON.parse(localStorage.getItem(user));
+
+  if(data.coins < 100) return alert("Sin monedas");
+
+  data.coins -= 100;
+
+  let r = [
+    random(),
+    random(),
+    random()
+  ];
+
+  document.getElementById("r1").innerText = r[0];
+  document.getElementById("r2").innerText = r[1];
+  document.getElementById("r3").innerText = r[2];
+
+  // PREMIO MAYOR NAY
+  if(r[0]=="N" && r[1]=="A" && r[2]=="Y" && !data.jackpot){
+    data.jackpot = true;
+    data.points += 1000;
+    alert("🎉 PREMIO MAYOR: TINTE MENSUAL 🎉");
+  }
+  else if(r[0]==r[1] && r[1]==r[2]){
+    data.points += 500;
+  }
+  else if(r[0]==r[1] || r[1]==r[2]){
+    data.points += 100;
+  }
+
+  localStorage.setItem(user, JSON.stringify(data));
+  load();
+}
+
+function random(){
+  let prob = Math.random();
+
+  if(prob < 0.05) return "N";
+  if(prob < 0.10) return "A";
+  if(prob < 0.15) return "Y";
+
+  return symbols[Math.floor(Math.random()*symbols.length)];
+}
+
+/* SUBIDAS */
+let pending = JSON.parse(localStorage.getItem("pending")||"[]");
+
+function uploadPhoto(){
+  pending.push({user,type:"foto",reward:500});
+  localStorage.setItem("pending", JSON.stringify(pending));
+  alert("Foto enviada para revisión");
+}
+
+function uploadAudio(){
+  pending.push({user,type:"audio",reward:100});
+  localStorage.setItem("pending", JSON.stringify(pending));
+  alert("Audio enviado");
+}
+
+/* ADMIN */
+function openAdmin(){
+  document.getElementById("adminPanel").style.display="block";
+}
+
+function checkAdmin(){
+  let pass = document.getElementById("adminPass").value;
+
+  if(pass === "cristiannayeli"){
+    showAdmin();
+  }else{
+    alert("Clave incorrecta");
   }
 }
 
-function checkWin([a, b, c]) {
-  let text = "";
+function showAdmin(){
+  let div = document.getElementById("adminContent");
+  div.innerHTML = "";
 
-  if (a === b && b === c) {
-    coins += 800;
-    text = "🔥 JACKPOT 🔥 +800";
-  } else if (a === b || b === c || a === c) {
-    coins += 200;
-    text = "✨ Premio medio +200";
-  } else {
-    text = "😢 Perdiste";
-  }
+  let list = JSON.parse(localStorage.getItem("pending")||"[]");
 
-  document.getElementById("resultado").textContent = text;
-  updateCoins();
-}
+  list.forEach((item,i)=>{
+    let btn = document.createElement("button");
+    btn.innerText = item.user + " - " + item.type;
 
-function randomSymbol() {
-  return symbols[Math.floor(Math.random() * symbols.length)];
-}
+    let approve = document.createElement("button");
+    approve.innerText = "Aprobar";
 
-function updateCoins() {
-  document.getElementById("coins").textContent = coins;
+    approve.onclick = ()=>{
+      let data = JSON.parse(localStorage.getItem(item.user));
+      data.coins += item.reward;
+
+      localStorage.setItem(item.user, JSON.stringify(data));
+
+      list.splice(i,1);
+      localStorage.setItem("pending", JSON.stringify(list));
+      showAdmin();
+    };
+
+    div.appendChild(btn);
+    div.appendChild(approve);
+    div.appendChild(document.createElement("br"));
+  });
 }
