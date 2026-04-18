@@ -19,10 +19,17 @@ function login(){
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
-      coins: u === "Prueba" ? 10000000000000 : 1000,
+      coins: u === "Prueba" ? 100000000 : 1000,
       points:0,
+      quetzales:0,
       jackpot:false
     }));
+  } else {
+    if(u === "Prueba"){
+      let data = JSON.parse(localStorage.getItem(user));
+      data.coins = 100000000;
+      localStorage.setItem(user, JSON.stringify(data));
+    }
   }
 
   document.getElementById("login").style.display="none";
@@ -34,9 +41,11 @@ function login(){
 function load(){
   let d = JSON.parse(localStorage.getItem(user));
 
+  if(!d.quetzales) d.quetzales = 0;
+
   document.getElementById("coins").innerText = d.coins;
   document.getElementById("points").innerText = d.points;
-  document.getElementById("quetzales").innerText = Math.floor(d.points/1000);
+  document.getElementById("quetzales").innerText = d.quetzales;
 }
 
 const symbols = ["N","A","Y","🍒","⭐"];
@@ -61,14 +70,11 @@ function spin(){
     let m2 = document.getElementById("c2r2").innerText;
     let m3 = document.getElementById("c3r2").innerText;
 
-    // 🎯 SOLO NAY da premio mayor
     if(m1=="N" && m2=="A" && m3=="Y" && !d.jackpot){
       d.jackpot = true;
       d.points += 2000;
       alert("🎉 PREMIO MAYOR 💖");
     }
-
-    // 🍒⭐ premios normales (SIN letras)
     else if(m1===m2 && m2===m3 && !["N","A","Y"].includes(m1)){
       d.points += 500;
     }
@@ -93,6 +99,27 @@ function spinColumn(prefix){
   }, 100);
 
   setTimeout(()=>clearInterval(interval), 800);
+}
+
+/* 💱 CONVERTIR */
+function convertPoints(){
+  let d = JSON.parse(localStorage.getItem(user));
+
+  if(d.points < 1000){
+    alert("Necesitas mínimo 1000 puntos");
+    return;
+  }
+
+  let gained = Math.floor(d.points / 1000);
+
+  d.points = d.points % 1000;
+  d.quetzales += gained;
+
+  localStorage.setItem(user, JSON.stringify(d));
+
+  alert("Ganaste " + gained + " quetzales 💵");
+
+  load();
 }
 
 /* WHATSAPP */
