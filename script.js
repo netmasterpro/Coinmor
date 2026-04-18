@@ -6,14 +6,12 @@ const USERS = {
   "Prueba": "94"
 };
 
-document.getElementById("loginBtn").addEventListener("click", login);
-
 function login(){
-  let u = document.getElementById("username").value;
-  let p = document.getElementById("password").value;
+  let u = document.getElementById("username").value.trim();
+  let p = document.getElementById("password").value.trim();
 
   if(!USERS[u] || USERS[u] !== p){
-    document.getElementById("error").innerText = "Datos incorrectos";
+    document.getElementById("error").innerText = "Usuario o clave incorrectos";
     return;
   }
 
@@ -122,9 +120,7 @@ function sendAudio(){
 
 function registerPending(type, reward){
   let pending = JSON.parse(localStorage.getItem("pending") || "[]");
-
   pending.push({user, type, reward});
-
   localStorage.setItem("pending", JSON.stringify(pending));
 }
 
@@ -149,10 +145,14 @@ function showAdmin(){
 
   let list = JSON.parse(localStorage.getItem("pending")||"[]");
 
+  if(list.length === 0){
+    div.innerHTML = "<p>No hay envíos</p>";
+    return;
+  }
+
   list.forEach((item,i)=>{
 
     let box = document.createElement("div");
-
     box.innerHTML = `<p>${item.user} - ${item.type}</p>`;
 
     let approve = document.createElement("button");
