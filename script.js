@@ -7,11 +7,11 @@ const USERS = {
 };
 
 function login(){
-  let u = document.getElementById("username").value.trim();
-  let p = document.getElementById("password").value.trim();
+  let u = username.value;
+  let p = password.value;
 
   if(!USERS[u] || USERS[u] !== p){
-    document.getElementById("error").innerText = "Usuario o clave incorrectos";
+    error.innerText = "Error";
     return;
   }
 
@@ -19,120 +19,100 @@ function login(){
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
-      coins:1000,
+      coins: u === "Prueba" ? 1000000000000 : 1000,
       points:0,
-      quetzales:0,
-      jackpot:false,
-      lastReward:0,
-      daily:0
+      jackpot:false
     }));
   }
 
-  document.getElementById("login").style.display="none";
-  document.getElementById("game").style.display="block";
+  login.style.display="none";
+  game.style.display="block";
 
   load();
 }
 
 function load(){
-  let data = JSON.parse(localStorage.getItem(user));
+  let d = JSON.parse(localStorage.getItem(user));
 
-  data.quetzales = Math.floor(data.points / 1000);
-
-  let now = Date.now();
-
-  if(data.coins <= 0){
-    if(now - data.lastReward > 1800000 && data.daily < 1000){
-      data.coins += 100;
-      data.daily += 100;
-      data.lastReward = now;
-    }
-  }
-
-  localStorage.setItem(user, JSON.stringify(data));
-  updateUI(data);
-}
-
-function updateUI(d){
-  document.getElementById("coins").innerText = d.coins;
-  document.getElementById("points").innerText = d.points;
-  document.getElementById("quetzales").innerText = d.quetzales;
+  coins.innerText = d.coins;
+  points.innerText = d.points;
+  quetzales.innerText = Math.floor(d.points/1000);
 }
 
 const symbols = ["N","A","Y","🍒","⭐"];
 
 function spin(){
-  let data = JSON.parse(localStorage.getItem(user));
+  let d = JSON.parse(localStorage.getItem(user));
 
-  if(data.coins < 100){
-    alert("Sin monedas");
-    return;
-  }
+  if(d.coins < 100) return alert("Sin monedas");
 
-  data.coins -= 100;
+  d.coins -= 100;
 
-  let r = [random(), random(), random()];
+  spinColumn("c1");
+  spinColumn("c2");
+  spinColumn("c3");
 
-  document.getElementById("r1").innerText = r[0];
-  document.getElementById("r2").innerText = r[1];
-  document.getElementById("r3").innerText = r[2];
+  setTimeout(()=>{
 
-  if(r[0]=="N" && r[1]=="A" && r[2]=="Y" && !data.jackpot){
-    data.jackpot = true;
-    data.points += 1000;
-    alert("🎉 PREMIO MAYOR: TINTE MENSUAL 🎉");
-  }
-  else if(r[0]==r[1] && r[1]==r[2]){
-    data.points += 500;
-  }
-  else if(r[0]==r[1] || r[1]==r[2]){
-    data.points += 100;
-  }
+    let m1 = document.getElementById("c1r2").innerText;
+    let m2 = document.getElementById("c2r2").innerText;
+    let m3 = document.getElementById("c3r2").innerText;
 
-  localStorage.setItem(user, JSON.stringify(data));
-  load();
+    if(m1=="N" && m2=="A" && m3=="Y" && !d.jackpot){
+      d.jackpot = true;
+      d.points += 2000;
+      alert("PREMIO MAYOR 💖");
+    }
+    else if(m1===m2 && m2===m3){
+      d.points += 500;
+    }
+    else if(m1===m2 || m2===m3){
+      d.points += 200;
+    }
+
+    localStorage.setItem(user, JSON.stringify(d));
+    load();
+
+  }, 1000);
 }
 
-function random(){
-  let p = Math.random();
+function spinColumn(prefix){
+  let ids = ["r1","r2","r3"];
 
-  if(p < 0.05) return "N";
-  if(p < 0.10) return "A";
-  if(p < 0.15) return "Y";
+  let interval = setInterval(()=>{
+    ids.forEach(id=>{
+      document.getElementById(prefix+id).innerText =
+      symbols[Math.floor(Math.random()*symbols.length)];
+    });
+  }, 100);
 
-  return symbols[Math.floor(Math.random()*symbols.length)];
+  setTimeout(()=>clearInterval(interval), 800);
 }
 
 /* WHATSAPP */
 function sendPhoto(){
-  let msg = encodeURIComponent("Hola, soy " + user + " envío foto para +500 monedas 📸");
-  window.open("https://wa.me/573026782036?text=" + msg, "_blank");
-
-  registerPending("foto", 500);
+  window.open("https://w.app/ruqepz","_blank");
+  register("foto",500);
 }
 
 function sendAudio(){
-  let msg = encodeURIComponent("Hola, soy " + user + " envío audio para +200 monedas 🎤");
-  window.open("https://wa.me/573026782036?text=" + msg, "_blank");
-
-  registerPending("audio", 200);
+  window.open("https://w.app/hxpfqw","_blank");
+  register("audio",200);
 }
 
-function registerPending(type, reward){
-  let pending = JSON.parse(localStorage.getItem("pending") || "[]");
-  pending.push({user, type, reward});
-  localStorage.setItem("pending", JSON.stringify(pending));
+function register(type,reward){
+  let p = JSON.parse(localStorage.getItem("pending")||"[]");
+  p.push({user,type,reward});
+  localStorage.setItem("pending", JSON.stringify(p));
 }
 
 /* ADMIN */
 function openAdmin(){
-  document.getElementById("adminPanel").style.display="block";
+  adminPanel.style.display="block";
 }
 
 function checkAdmin(){
-  let pass = document.getElementById("adminPass").value;
-
-  if(pass === "cristiannayeli"){
+  if(adminPass.value === "cristiannayeli"){
     showAdmin();
   }else{
     alert("Clave incorrecta");
@@ -140,48 +120,41 @@ function checkAdmin(){
 }
 
 function showAdmin(){
-  let div = document.getElementById("adminContent");
-  div.innerHTML = "";
+  adminContent.innerHTML="";
 
   let list = JSON.parse(localStorage.getItem("pending")||"[]");
 
-  if(list.length === 0){
-    div.innerHTML = "<p>No hay envíos</p>";
-    return;
-  }
-
   list.forEach((item,i)=>{
+    let div = document.createElement("div");
 
-    let box = document.createElement("div");
-    box.innerHTML = `<p>${item.user} - ${item.type}</p>`;
+    div.innerHTML = `${item.user} - ${item.type}`;
 
-    let approve = document.createElement("button");
-    approve.innerText = "✅ Aprobar";
+    let ok = document.createElement("button");
+    ok.innerText="✔";
 
-    let reject = document.createElement("button");
-    reject.innerText = "❌ Rechazar";
+    let no = document.createElement("button");
+    no.innerText="✖";
 
-    approve.onclick = ()=>{
-      let data = JSON.parse(localStorage.getItem(item.user));
-      data.coins += item.reward;
+    ok.onclick=()=>{
+      let d = JSON.parse(localStorage.getItem(item.user));
+      d.coins += item.reward;
 
-      localStorage.setItem(item.user, JSON.stringify(data));
+      localStorage.setItem(item.user, JSON.stringify(d));
 
-      list.splice(i,1);
-      localStorage.setItem("pending", JSON.stringify(list));
-
-      showAdmin();
-    };
-
-    reject.onclick = ()=>{
       list.splice(i,1);
       localStorage.setItem("pending", JSON.stringify(list));
       showAdmin();
     };
 
-    box.appendChild(approve);
-    box.appendChild(reject);
+    no.onclick=()=>{
+      list.splice(i,1);
+      localStorage.setItem("pending", JSON.stringify(list));
+      showAdmin();
+    };
 
-    div.appendChild(box);
+    div.appendChild(ok);
+    div.appendChild(no);
+
+    adminContent.appendChild(div);
   });
 }
