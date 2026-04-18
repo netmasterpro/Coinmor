@@ -9,11 +9,12 @@ body {
   display: flex;
   justify-content: center;
   gap: 10px;
+  margin: 20px;
 }
 
 .reel {
   width: 80px;
-  height: 150px;
+  height: 120px;
   border: 2px solid gold;
   font-size: 40px;
   display: flex;
@@ -31,10 +32,25 @@ body {
   right: 10px;
 }
 
+button {
+  padding: 10px 20px;
+  margin: 5px;
+}
+
 .modal {
   display:none;
   position:fixed;
   background:rgba(0,0,0,0.8);
+  width:100%;
+  height:100%;
+}
+
+.modal-content {
+  background:#222;
+  padding:20px;
+  margin:50px auto;
+  width:300px;
+}  background:rgba(0,0,0,0.8);
   width:100%;
   height:100%;
 }
