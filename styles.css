@@ -1,40 +1,50 @@
 body {
-  margin: 0;
-  background: radial-gradient(circle, #1a1a1a, #000);
+  background: black;
   color: white;
-  font-family: Arial;
   text-align: center;
-}
-
-.title {
-  color: gold;
-  text-shadow: 0 0 10px gold;
-}
-
-.casino {
-  margin-top: 50px;
-}
-
-.saldo {
-  font-size: 22px;
-  margin: 20px;
+  font-family: Arial;
 }
 
 .machine {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin: 30px;
+  gap: 10px;
 }
 
 .reel {
-  width: 100px;
-  height: 100px;
-  background: #111;
-  border: 3px solid gold;
-  border-radius: 15px;
-  font-size: 60px;
+  width: 80px;
+  height: 150px;
+  border: 2px solid gold;
+  font-size: 40px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-bar {
+  margin: 20px;
+}
+
+.admin-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.modal {
+  display:none;
+  position:fixed;
+  background:rgba(0,0,0,0.8);
+  width:100%;
+  height:100%;
+}
+
+.modal-content {
+  background:#222;
+  padding:20px;
+  margin:50px auto;
+  width:300px;
+}  display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 20px gold inset;
