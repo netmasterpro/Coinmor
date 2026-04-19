@@ -1,23 +1,23 @@
 let user = null;
 
-/* 👤 USUARIOS */
+/* USUARIOS */
 const USERS = {
   "Cristian": "94",
   "Nayeli": "94",
   "Prueba": "12345"
 };
 
-/* 🔑 CLAVES */
+/* CLAVES */
 const KEY_200 = "K200";
 const KEY_500 = "K500";
 
-/* 🔐 LOGIN */
+/* LOGIN */
 function login(){
-  let u = document.getElementById("username").value.trim();
-  let p = document.getElementById("password").value.trim();
+  let u = username.value.trim();
+  let p = password.value.trim();
 
   if(!USERS[u] || USERS[u] !== p){
-    document.getElementById("error").innerText = "Datos incorrectos";
+    error.innerText = "Datos incorrectos";
     return;
   }
 
@@ -25,50 +25,51 @@ function login(){
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
-      coins: u === "Prueba" ? 100000000 : 1000,
-      points: 0,
-      quetzales: 0,
-      jackpot: false,
+      coins: u==="Prueba"?100000000:1000,
+      points:0,
+      quetzales:0,
+      jackpot:false,
       lastOnline: Date.now()
     }));
   }
 
-  document.getElementById("login").style.display="none";
-  document.getElementById("game").style.display="block";
+  loginDiv = document.getElementById("login");
+  gameDiv = document.getElementById("game");
+
+  loginDiv.style.display="none";
+  gameDiv.style.display="block";
 
   applyOfflineCoins();
   load();
   startAutoCoins();
 }
 
-/* 💰 MONEDAS OFFLINE */
+/* OFFLINE */
 function applyOfflineCoins(){
   let d = JSON.parse(localStorage.getItem(user));
 
-  let now = Date.now();
-  let diff = now - d.lastOnline;
-
+  let diff = Date.now() - d.lastOnline;
   let minutes = Math.floor(diff / 60000);
 
-  let coinsEarned = Math.floor(minutes / 30) * 100;
+  let earned = Math.floor(minutes / 30) * 100;
 
-  d.coins += coinsEarned;
-  d.lastOnline = now;
+  d.coins += earned;
+  d.lastOnline = Date.now();
 
   localStorage.setItem(user, JSON.stringify(d));
 }
 
-/* ⏱️ MONEDAS ONLINE */
+/* ONLINE */
 function startAutoCoins(){
   setInterval(()=>{
     let d = JSON.parse(localStorage.getItem(user));
     d.coins += 1;
     localStorage.setItem(user, JSON.stringify(d));
     load();
-  }, 30000);
+  },30000);
 }
 
-/* 🎰 TRAGAPERRAS */
+/* SLOT */
 const symbols = ["N","A","Y","🍒","⭐"];
 
 function spin(){
@@ -81,142 +82,104 @@ function spin(){
 
   d.coins -= 100;
 
-  spinColumn("c1");
-  spinColumn("c2");
-  spinColumn("c3");
+  spinCol("c1");
+  spinCol("c2");
+  spinCol("c3");
 
   setTimeout(()=>{
+    let m1=c1r2.innerText;
+    let m2=c2r2.innerText;
+    let m3=c3r2.innerText;
 
-    let m1 = document.getElementById("c1r2").innerText;
-    let m2 = document.getElementById("c2r2").innerText;
-    let m3 = document.getElementById("c3r2").innerText;
-
-    /* 🎯 PREMIO MAYOR */
-    if(m1=="N" && m2=="A" && m3=="Y" && !d.jackpot){
-      d.jackpot = true;
-      d.points += 2000;
-      alert("🎉 PREMIO MAYOR 💖");
+    if(m1=="N"&&m2=="A"&&m3=="Y"&&!d.jackpot){
+      d.jackpot=true;
+      d.points+=2000;
+      alert("PREMIO MAYOR");
+    }
+    else if(m1===m2&&m2===m3&&!["N","A","Y"].includes(m1)){
+      d.points+=500;
+    }
+    else if((m1===m2||m2===m3)&&!["N","A","Y"].includes(m2)){
+      d.points+=200;
     }
 
-    /* 🎰 PREMIOS NORMALES */
-    else if(m1===m2 && m2===m3 && !["N","A","Y"].includes(m1)){
-      d.points += 500;
-    }
-    else if((m1===m2 || m2===m3) && !["N","A","Y"].includes(m2)){
-      d.points += 200;
-    }
-
-    localStorage.setItem(user, JSON.stringify(d));
+    localStorage.setItem(user,JSON.stringify(d));
     load();
-
-  }, 1000);
+  },1000);
 }
 
-function spinColumn(prefix){
-  let ids = ["r1","r2","r3"];
-
-  let interval = setInterval(()=>{
+function spinCol(p){
+  let ids=["r1","r2","r3"];
+  let i=setInterval(()=>{
     ids.forEach(id=>{
-      document.getElementById(prefix+id).innerText =
-        symbols[Math.floor(Math.random()*symbols.length)];
+      document.getElementById(p+id).innerText =
+      symbols[Math.floor(Math.random()*symbols.length)];
     });
-  }, 100);
-
-  setTimeout(()=>clearInterval(interval), 800);
+  },100);
+  setTimeout(()=>clearInterval(i),800);
 }
 
-/* 💱 CONVERTIR PUNTOS */
+/* CONVERTIR */
 function convertPoints(){
-  let d = JSON.parse(localStorage.getItem(user));
+  let d=JSON.parse(localStorage.getItem(user));
 
-  if(d.points < 1000){
-    alert("Necesitas mínimo 1000 puntos");
-    return;
-  }
+  if(d.points<1000)return alert("mínimo 1000");
 
-  let gained = Math.floor(d.points / 1000);
+  let g=Math.floor(d.points/1000);
 
-  d.points = d.points % 1000;
-  d.quetzales += gained;
+  d.points%=1000;
+  d.quetzales+=g;
 
-  localStorage.setItem(user, JSON.stringify(d));
-
-  alert("Ganaste " + gained + " quetzales 💵");
-
+  localStorage.setItem(user,JSON.stringify(d));
   load();
 }
 
-/* 📲 WHATSAPP (ARREGLADO) */
-function sendPhoto(){
-  window.location.href = "https://wa.me/573026782036?text=Te%20envio%20mi%20selfie%20para%20500%20monedas";
-}
-
-function sendAudio(){
-  window.location.href = "https://wa.me/573026782036?text=Te%20envio%20mi%20audio%20para%20200%20monedas";
-}
-
-/* 🔑 CLAVES */
+/* CLAVES */
 function redeem200(){
-  let input = document.getElementById("key200").value.trim();
+  let k=key200.value.trim();
 
-  if(input !== KEY_200){
-    alert("Clave incorrecta");
-    return;
-  }
+  if(k!==KEY_200)return alert("Clave incorrecta");
 
-  let used = JSON.parse(localStorage.getItem("used") || "[]");
+  let used=JSON.parse(localStorage.getItem("used")||"[]");
 
-  if(used.includes(input)){
-    alert("Esta clave ya fue usada");
-    return;
-  }
+  if(used.includes(k))return alert("Ya usada");
 
-  let d = JSON.parse(localStorage.getItem(user));
-  d.coins += 200;
+  let d=JSON.parse(localStorage.getItem(user));
+  d.coins+=200;
 
-  used.push(input);
+  used.push(k);
 
-  localStorage.setItem(user, JSON.stringify(d));
-  localStorage.setItem("used", JSON.stringify(used));
-
-  alert("Ganaste 200 monedas 💰");
+  localStorage.setItem(user,JSON.stringify(d));
+  localStorage.setItem("used",JSON.stringify(used));
 
   load();
 }
 
 function redeem500(){
-  let input = document.getElementById("key500").value.trim();
+  let k=key500.value.trim();
 
-  if(input !== KEY_500){
-    alert("Clave incorrecta");
-    return;
-  }
+  if(k!==KEY_500)return alert("Clave incorrecta");
 
-  let used = JSON.parse(localStorage.getItem("used") || "[]");
+  let used=JSON.parse(localStorage.getItem("used")||"[]");
 
-  if(used.includes(input)){
-    alert("Esta clave ya fue usada");
-    return;
-  }
+  if(used.includes(k))return alert("Ya usada");
 
-  let d = JSON.parse(localStorage.getItem(user));
-  d.coins += 500;
+  let d=JSON.parse(localStorage.getItem(user));
+  d.coins+=500;
 
-  used.push(input);
+  used.push(k);
 
-  localStorage.setItem(user, JSON.stringify(d));
-  localStorage.setItem("used", JSON.stringify(used));
-
-  alert("Ganaste 500 monedas 💰");
+  localStorage.setItem(user,JSON.stringify(d));
+  localStorage.setItem("used",JSON.stringify(used));
 
   load();
 }
 
-/* 📊 CARGAR */
+/* LOAD */
 function load(){
-  let d = JSON.parse(localStorage.getItem(user));
+  let d=JSON.parse(localStorage.getItem(user));
 
-  document.getElementById("coins").innerText = d.coins;
-  document.getElementById("points").innerText = d.points;
-  document.getElementById("quetzales").innerText = d.quetzales;
+  coins.innerText=d.coins;
+  points.innerText=d.points;
+  quetzales.innerText=d.quetzales;
 }
