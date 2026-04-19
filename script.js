@@ -1,90 +1,65 @@
-let user = null;
+let user=null;
 
-/* USUARIOS */
-const USERS = {
-  "Cristian": "94",
-  "Nayeli": "94",
-  "Prueba": "12345"
+const USERS={
+  "Cristian":"94",
+  "Nayeli":"94",
+  "Prueba":"12345"
 };
 
-/* CLAVES */
-const KEY_200 = "K200";
-const KEY_500 = "K500";
+const KEY_200="K200";
+const KEY_500="K500";
 
-/* LOGIN */
 function login(){
-  let u = username.value.trim();
-  let p = password.value.trim();
+  let u=username.value.trim();
+  let p=password.value.trim();
 
-  if(!USERS[u] || USERS[u] !== p){
-    error.innerText = "Datos incorrectos";
+  if(!USERS[u]||USERS[u]!==p){
+    error.innerText="Error";
     return;
   }
 
-  user = u;
+  user=u;
 
   if(!localStorage.getItem(user)){
-    localStorage.setItem(user, JSON.stringify({
-      coins: u==="Prueba"?100000000:1000,
+    localStorage.setItem(user,JSON.stringify({
+      coins: u==="Prueba"?2000000:2000,
       points:0,
       quetzales:0,
       jackpot:false,
-      lastOnline: Date.now()
+      lastOnline:Date.now()
     }));
   }
 
-  loginDiv = document.getElementById("login");
-  gameDiv = document.getElementById("game");
+  login.style.display="none";
+  game.style.display="block";
 
-  loginDiv.style.display="none";
-  gameDiv.style.display="block";
-
-  applyOfflineCoins();
+  offline();
   load();
-  startAutoCoins();
 }
 
 /* OFFLINE */
-function applyOfflineCoins(){
-  let d = JSON.parse(localStorage.getItem(user));
+function offline(){
+  let d=JSON.parse(localStorage.getItem(user));
+  let diff=Date.now()-d.lastOnline;
+  let mins=Math.floor(diff/60000);
 
-  let diff = Date.now() - d.lastOnline;
-  let minutes = Math.floor(diff / 60000);
+  d.coins+=Math.floor(mins/30)*100;
+  d.lastOnline=Date.now();
 
-  let earned = Math.floor(minutes / 30) * 100;
-
-  d.coins += earned;
-  d.lastOnline = Date.now();
-
-  localStorage.setItem(user, JSON.stringify(d));
-}
-
-/* ONLINE */
-function startAutoCoins(){
-  setInterval(()=>{
-    let d = JSON.parse(localStorage.getItem(user));
-    d.coins += 1;
-    localStorage.setItem(user, JSON.stringify(d));
-    load();
-  },30000);
+  localStorage.setItem(user,JSON.stringify(d));
 }
 
 /* SLOT */
-const symbols = ["N","A","Y","🍒","⭐"];
+const symbols=["❤️","⭐","🌙","🍒","💎","🍀","🔥","N","A","Y"];
 
 function spin(){
-  let d = JSON.parse(localStorage.getItem(user));
+  let d=JSON.parse(localStorage.getItem(user));
 
-  if(d.coins < 100){
-    alert("Sin monedas");
-    return;
-  }
+  if(d.coins<100)return alert("Sin monedas");
 
-  d.coins -= 100;
+  d.coins-=100;
 
-  spinCol("c1");
-  spinCol("c2");
-  spinCol("c3");
+  roll("c1"); roll("c2"); roll("c3");
 
   setTimeout(()=>{
     let m1=c1r2.innerText;
@@ -96,11 +71,11 @@ function spin(){
       d.points+=2000;
       alert("PREMIO MAYOR");
     }
-    else if(m1===m2&&m2===m3&&!["N","A","Y"].includes(m1)){
-      d.points+=500;
-    }
-    else if((m1===m2||m2===m3)&&!["N","A","Y"].includes(m2)){
+    else if(m1===m2&&m2===m3){
       d.points+=200;
+    }
+    else if(m1===m2||m2===m3){
+      d.points+=50;
     }
 
     localStorage.setItem(user,JSON.stringify(d));
@@ -108,25 +83,23 @@ function spin(){
   },1000);
 }
 
-function spinCol(p){
+function roll(c){
   let ids=["r1","r2","r3"];
   let i=setInterval(()=>{
     ids.forEach(id=>{
-      document.getElementById(p+id).innerText =
+      document.getElementById(c+id).innerText=
       symbols[Math.floor(Math.random()*symbols.length)];
     });
   },100);
   setTimeout(()=>clearInterval(i),800);
 }
 
-/* CONVERTIR */
+/* CANJE */
 function convertPoints(){
   let d=JSON.parse(localStorage.getItem(user));
-
   if(d.points<1000)return alert("mínimo 1000");
 
   let g=Math.floor(d.points/1000);
-
   d.points%=1000;
   d.quetzales+=g;
 
@@ -137,11 +110,9 @@ function convertPoints(){
 /* CLAVES */
 function redeem200(){
   let k=key200.value.trim();
-
   if(k!==KEY_200)return alert("Clave incorrecta");
 
   let used=JSON.parse(localStorage.getItem("used")||"[]");
-
   if(used.includes(k))return alert("Ya usada");
 
   let d=JSON.parse(localStorage.getItem(user));
@@ -157,11 +128,9 @@ function redeem200(){
 
 function redeem500(){
   let k=key500.value.trim();
-
   if(k!==KEY_500)return alert("Clave incorrecta");
 
   let used=JSON.parse(localStorage.getItem("used")||"[]");
-
   if(used.includes(k))return alert("Ya usada");
 
   let d=JSON.parse(localStorage.getItem(user));
@@ -175,10 +144,8 @@ function redeem500(){
   load();
 }
 
-/* LOAD */
 function load(){
   let d=JSON.parse(localStorage.getItem(user));
-
   coins.innerText=d.coins;
   points.innerText=d.points;
   quetzales.innerText=d.quetzales;
