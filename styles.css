@@ -1,84 +1,61 @@
-body {
-  background: radial-gradient(circle, #111, #000);
-  color: white;
-  text-align: center;
-  font-family: Arial, sans-serif;
+body{
+  margin:0;
+  background:#000;
+  color:white;
+  font-family:Arial;
 }
 
-h1 {
-  color: gold;
-  text-shadow: 0 0 10px gold;
+.container{
+  max-width:400px;
+  margin:auto;
+  padding:15px;
+  text-align:center;
 }
 
-.machine {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin: 20px;
+input{
+  width:90%;
+  padding:12px;
+  margin:8px 0;
+  font-size:16px;
 }
 
-.column {
-  display: flex;
-  flex-direction: column;
+button{
+  width:90%;
+  padding:12px;
+  margin:5px 0;
+  font-size:16px;
+  background:gold;
+  border:none;
+  border-radius:8px;
 }
 
-.cell {
-  width: 70px;
-  height: 70px;
-  border: 2px solid gold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 35px;
-  background: #111;
-  box-shadow: inset 0 0 10px black;
+.stats{
+  display:flex;
+  justify-content:space-around;
+  margin:10px 0;
 }
 
-.middle {
-  border: 3px solid red;
-  box-shadow: 0 0 15px red;
-  transform: scale(1.1);
+.machine{
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-button {
-  margin: 8px;
-  padding: 10px 15px;
-  background: linear-gradient(45deg, gold, orange);
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
+.column{
+  display:flex;
+  flex-direction:column;
 }
 
-button:hover {
-  transform: scale(1.05);
+.cell{
+  width:60px;
+  height:60px;
+  border:2px solid gold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
 }
 
-input {
-  padding: 8px;
-  margin: 5px;
-  border-radius: 5px;
-  border: none;
-}  padding: 10px;
-}
-
-.admin-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.modal {
-  display:none;
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.8);
-}
-
-.modal-content {
-  background:#222;
-  margin:50px auto;
-  padding:20px;
-  width:300px;
+.middle{
+  border:3px solid red;
 }
