@@ -1,17 +1,23 @@
 let user = null;
 
+/* 👤 USUARIOS */
 const USERS = {
   "Cristian": "94",
   "Nayeli": "94",
   "Prueba": "12345"
 };
 
+/* 🔑 CLAVES */
+const KEY_200 = "K200";
+const KEY_500 = "K500";
+
+/* LOGIN */
 function login(){
-  let u = username.value.trim();
-  let p = password.value.trim();
+  let u = document.getElementById("username").value.trim();
+  let p = document.getElementById("password").value.trim();
 
   if(!USERS[u] || USERS[u] !== p){
-    error.innerText = "Error";
+    document.getElementById("error").innerText = "Datos incorrectos";
     return;
   }
 
@@ -19,10 +25,10 @@ function login(){
 
   if(!localStorage.getItem(user)){
     localStorage.setItem(user, JSON.stringify({
-      coins: u==="Prueba"?100000000:1000,
-      points:0,
-      quetzales:0,
-      jackpot:false,
+      coins: u === "Prueba" ? 100000000 : 1000,
+      points: 0,
+      quetzales: 0,
+      jackpot: false,
       lastOnline: Date.now()
     }));
   }
@@ -35,7 +41,7 @@ function login(){
   startAutoCoins();
 }
 
-/* 💰 OFFLINE */
+/* 💰 MONEDAS OFFLINE */
 function applyOfflineCoins(){
   let d = JSON.parse(localStorage.getItem(user));
 
@@ -52,119 +58,165 @@ function applyOfflineCoins(){
   localStorage.setItem(user, JSON.stringify(d));
 }
 
-/* ⏱️ ONLINE */
+/* ⏱️ MONEDAS ONLINE */
 function startAutoCoins(){
   setInterval(()=>{
     let d = JSON.parse(localStorage.getItem(user));
     d.coins += 1;
     localStorage.setItem(user, JSON.stringify(d));
     load();
-  },30000);
+  }, 30000);
 }
 
-/* 🎰 JUEGO */
+/* 🎰 TRAGAPERRAS */
 const symbols = ["N","A","Y","🍒","⭐"];
 
 function spin(){
   let d = JSON.parse(localStorage.getItem(user));
 
-  if(d.coins < 100) return alert("Sin monedas");
+  if(d.coins < 100){
+    alert("Sin monedas");
+    return;
+  }
 
   d.coins -= 100;
 
-  spinCol("c1");
-  spinCol("c2");
-  spinCol("c3");
+  spinColumn("c1");
+  spinColumn("c2");
+  spinColumn("c3");
 
   setTimeout(()=>{
-    let m1=c1r2.innerText;
-    let m2=c2r2.innerText;
-    let m3=c3r2.innerText;
 
-    if(m1=="N"&&m2=="A"&&m3=="Y"&&!d.jackpot){
-      d.jackpot=true;
-      d.points+=2000;
-      alert("PREMIO MAYOR");
-    }
-    else if(m1===m2&&m2===m3&&!["N","A","Y"].includes(m1)){
-      d.points+=500;
-    }
-    else if((m1===m2||m2===m3)&&!["N","A","Y"].includes(m2)){
-      d.points+=200;
+    let m1 = document.getElementById("c1r2").innerText;
+    let m2 = document.getElementById("c2r2").innerText;
+    let m3 = document.getElementById("c3r2").innerText;
+
+    /* 🎯 PREMIO MAYOR */
+    if(m1=="N" && m2=="A" && m3=="Y" && !d.jackpot){
+      d.jackpot = true;
+      d.points += 2000;
+      alert("🎉 PREMIO MAYOR 💖");
     }
 
-    localStorage.setItem(user,JSON.stringify(d));
+    /* 🎰 PREMIOS NORMALES */
+    else if(m1===m2 && m2===m3 && !["N","A","Y"].includes(m1)){
+      d.points += 500;
+    }
+    else if((m1===m2 || m2===m3) && !["N","A","Y"].includes(m2)){
+      d.points += 200;
+    }
+
+    localStorage.setItem(user, JSON.stringify(d));
     load();
-  },1000);
+
+  }, 1000);
 }
 
-function spinCol(p){
-  let ids=["r1","r2","r3"];
-  let i=setInterval(()=>{
+function spinColumn(prefix){
+  let ids = ["r1","r2","r3"];
+
+  let interval = setInterval(()=>{
     ids.forEach(id=>{
-      document.getElementById(p+id).innerText =
-      symbols[Math.floor(Math.random()*symbols.length)];
+      document.getElementById(prefix+id).innerText =
+        symbols[Math.floor(Math.random()*symbols.length)];
     });
-  },100);
-  setTimeout(()=>clearInterval(i),800);
+  }, 100);
+
+  setTimeout(()=>clearInterval(interval), 800);
 }
 
-/* 💱 */
+/* 💱 CONVERTIR PUNTOS */
 function convertPoints(){
-  let d=JSON.parse(localStorage.getItem(user));
-  if(d.points<1000)return alert("mínimo 1000");
-  let g=Math.floor(d.points/1000);
-  d.points%=1000;
-  d.quetzales+=g;
-  localStorage.setItem(user,JSON.stringify(d));
+  let d = JSON.parse(localStorage.getItem(user));
+
+  if(d.points < 1000){
+    alert("Necesitas mínimo 1000 puntos");
+    return;
+  }
+
+  let gained = Math.floor(d.points / 1000);
+
+  d.points = d.points % 1000;
+  d.quetzales += gained;
+
+  localStorage.setItem(user, JSON.stringify(d));
+
+  alert("Ganaste " + gained + " quetzales 💵");
+
   load();
 }
 
+/* 🔗 WHATSAPP */
+function sendPhoto(){
+  window.open("https://w.app/ruqepz","_blank");
+}
+
+function sendAudio(){
+  window.open("https://w.app/hxpfqw","_blank");
+}
+
 /* 🔑 CLAVES */
-const KEY_200="K200";
-const KEY_500="K500";
-
-function used(key){
-  let u=JSON.parse(localStorage.getItem("used")||"[]");
-  return u.includes(key);
-}
-
-function saveKey(key){
-  let u=JSON.parse(localStorage.getItem("used")||"[]");
-  u.push(key);
-  localStorage.setItem("used",JSON.stringify(u));
-}
-
 function redeem200(){
-  let k=key200.value;
-  if(k!==KEY_200)return alert("Clave incorrecta");
-  if(used(k))return alert("Ya usada");
+  let input = document.getElementById("key200").value.trim();
 
-  let d=JSON.parse(localStorage.getItem(user));
-  d.coins+=200;
+  if(input !== KEY_200){
+    alert("Clave incorrecta");
+    return;
+  }
 
-  localStorage.setItem(user,JSON.stringify(d));
-  saveKey(k);
+  let used = JSON.parse(localStorage.getItem("used") || "[]");
+
+  if(used.includes(input)){
+    alert("Esta clave ya fue usada");
+    return;
+  }
+
+  let d = JSON.parse(localStorage.getItem(user));
+  d.coins += 200;
+
+  used.push(input);
+
+  localStorage.setItem(user, JSON.stringify(d));
+  localStorage.setItem("used", JSON.stringify(used));
+
+  alert("Ganaste 200 monedas 💰");
+
   load();
 }
 
 function redeem500(){
-  let k=key500.value;
-  if(k!==KEY_500)return alert("Clave incorrecta");
-  if(used(k))return alert("Ya usada");
+  let input = document.getElementById("key500").value.trim();
 
-  let d=JSON.parse(localStorage.getItem(user));
-  d.coins+=500;
+  if(input !== KEY_500){
+    alert("Clave incorrecta");
+    return;
+  }
 
-  localStorage.setItem(user,JSON.stringify(d));
-  saveKey(k);
+  let used = JSON.parse(localStorage.getItem("used") || "[]");
+
+  if(used.includes(input)){
+    alert("Esta clave ya fue usada");
+    return;
+  }
+
+  let d = JSON.parse(localStorage.getItem(user));
+  d.coins += 500;
+
+  used.push(input);
+
+  localStorage.setItem(user, JSON.stringify(d));
+  localStorage.setItem("used", JSON.stringify(used));
+
+  alert("Ganaste 500 monedas 💰");
+
   load();
 }
 
-/* LOAD */
+/* 📊 CARGAR DATOS */
 function load(){
-  let d=JSON.parse(localStorage.getItem(user));
-  coins.innerText=d.coins;
-  points.innerText=d.points;
-  quetzales.innerText=d.quetzales;
+  let d = JSON.parse(localStorage.getItem(user));
+
+  document.getElementById("coins").innerText = d.coins;
+  document.getElementById("points").innerText = d.points;
+  document.getElementById("quetzales").innerText = d.quetzales;
 }
