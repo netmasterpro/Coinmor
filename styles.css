@@ -12,27 +12,34 @@ body{
   text-align:center;
 }
 
-input{
-  width:90%;
-  padding:12px;
-  margin:8px 0;
-  font-size:16px;
-}
-
-button{
+input, button{
   width:90%;
   padding:12px;
   margin:5px 0;
   font-size:16px;
+}
+
+button{
   background:gold;
   border:none;
   border-radius:8px;
 }
 
+.wa-btn{
+  display:block;
+  width:90%;
+  margin:5px auto;
+  padding:12px;
+  background:#25D366;
+  color:white;
+  text-decoration:none;
+  border-radius:8px;
+  font-weight:bold;
+}
+
 .stats{
   display:flex;
   justify-content:space-around;
-  margin:10px 0;
 }
 
 .machine{
