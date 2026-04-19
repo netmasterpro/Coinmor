@@ -11,7 +11,7 @@ const USERS = {
 const KEY_200 = "K200";
 const KEY_500 = "K500";
 
-/* LOGIN */
+/* 🔐 LOGIN */
 function login(){
   let u = document.getElementById("username").value.trim();
   let p = document.getElementById("password").value.trim();
@@ -146,13 +146,13 @@ function convertPoints(){
   load();
 }
 
-/* 🔗 WHATSAPP */
+/* 📲 WHATSAPP (ARREGLADO) */
 function sendPhoto(){
-  window.open("https://w.app/ruqepz","_blank");
+  window.location.href = "https://wa.me/573026782036?text=Te%20envio%20mi%20selfie%20para%20500%20monedas";
 }
 
 function sendAudio(){
-  window.open("https://w.app/hxpfqw","_blank");
+  window.location.href = "https://wa.me/573026782036?text=Te%20envio%20mi%20audio%20para%20200%20monedas";
 }
 
 /* 🔑 CLAVES */
@@ -212,7 +212,7 @@ function redeem500(){
   load();
 }
 
-/* 📊 CARGAR DATOS */
+/* 📊 CARGAR */
 function load(){
   let d = JSON.parse(localStorage.getItem(user));
 
