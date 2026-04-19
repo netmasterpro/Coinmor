@@ -2,12 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Casino del Amor PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casino</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div id="login">
+<div id="login" class="container">
   <h2>Iniciar sesión</h2>
   <input id="username" placeholder="Usuario">
   <input id="password" type="password" placeholder="Clave">
@@ -15,14 +16,14 @@
   <p id="error"></p>
 </div>
 
-<div id="game" style="display:none">
+<div id="game" class="container" style="display:none">
 
 <h1>🎰 CASINO 🎰</h1>
 
-<div>
-💰 <span id="coins"></span> |
-⭐ <span id="points"></span> |
-💵 <span id="quetzales"></span>
+<div class="stats">
+  💰 <span id="coins"></span>
+  ⭐ <span id="points"></span>
+  💵 <span id="quetzales"></span>
 </div>
 
 <div class="machine">
@@ -44,16 +45,17 @@
 </div>
 
 <button onclick="spin()">GIRAR (100)</button>
-
 <button onclick="convertPoints()">💱 Canjear puntos</button>
 
-<h3>Obtener monedas</h3>
-
-<button>📸 500 monedas - selfie</button>
+<!-- 500 -->
+<h3>📸 Obtener 500 monedas</h3>
+<button onclick="sendPhoto()">Enviar selfie</button>
 <input id="key500" placeholder="Clave 500">
 <button onclick="redeem500()">Canjear 500</button>
 
-<button>🎤 200 monedas - audio</button>
+<!-- 200 -->
+<h3>🎤 Obtener 200 monedas</h3>
+<button onclick="sendAudio()">Enviar audio</button>
 <input id="key200" placeholder="Clave 200">
 <button onclick="redeem200()">Canjear 200</button>
 
